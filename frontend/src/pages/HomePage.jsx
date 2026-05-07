@@ -1,46 +1,50 @@
+import Navbar from '../components/Navbar.jsx'
 import Card from '../components/Card.jsx'
 
 const cardItems = [
 	{
-		title: 'Card One',
+		title: 'Subject One',
         color: 'red',
-		caption: 'Card one caption.',
+		caption: 'Subject one caption.',
 	},
 	{
-		title: 'Card Two',
+		title: 'Subject Two',
         color: 'blue',
-		caption: 'Card two caption.',
+		caption: 'Subject two caption.',
 	},
 	{
-		title: 'Card Three',
+		title: 'Subject Three',
         color: 'green',
-		caption: 'Card three caption.',
+		caption: 'Subject three caption.',
 	},
 	{
-		title: 'Card Four',
+		title: 'Subject Four',
         color: 'yellow',
-		caption: 'Card four caption.',
+		caption: 'Subject four caption.',
 	},
 ]
 
 const HomePage = () => {
 	return (
-		<main className="min-h-screen bg-black px-6 py-16 text-white">
-			<section className="mx-auto max-w-6xl">
-				<div className="max-w-2xl">
-					<h1 className="text-4xl font-semibold uppercase tracking-[0.3em] text-gray-500">
-						Home Page
-					</h1>
-				</div>
+		<div className="flex min-h-screen bg-black text-white">
+			<Navbar />
 
-				<div className="mt-12 grid gap-5 xl:grid-cols-4">
-					{cardItems.map((item) => (
-						<Card key={item.title} color={item.color} title={item.title} caption={item.caption} />
-					))}
-				</div>
-			</section>
+			<main className="flex-1 px-6 py-16">
+				<section className="mx-auto max-w-6xl">
+					<div className="max-w-2xl">
+						<h1 className="text-4xl font-semibold uppercase tracking-[0.3em] text-gray-500">
+							Subjects
+						</h1>
+					</div>
 
-		</main>
+					<div className="mt-12 grid gap-5 xl:grid-cols-4">
+						{cardItems.map((item) => (
+							<Card key={item.title} color={item.color} title={item.title} caption={item.caption} />
+						))}
+					</div>
+				</section>
+			</main>
+		</div>
 	)
 }
 
