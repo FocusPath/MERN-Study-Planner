@@ -24,7 +24,7 @@ const cardItems = [
 	},
 ]
 
-const HomePage = () => {
+const Subjects = () => {
 	return (
 		<div className="flex min-h-screen bg-black text-white">
 			<Navbar />
@@ -44,8 +44,16 @@ const HomePage = () => {
 					</div>
 				</section>
 			</main>
+
+			<button
+				type="button"
+				aria-label="Add subject"
+				className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-gray-300 text-3xl leading-none text-black shadow-lg transition-transform hover:scale-105 pb-1.5"
+			>
+				+
+			</button>
 		</div>
 	)
 }
 
-export default HomePage
+export default Subjects
