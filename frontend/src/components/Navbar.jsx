@@ -34,7 +34,14 @@ const Navbar = () => {
       <aside id="app-nav" className="bg-gray-900 text-white min-h-screen w-64">
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold">FocusPath</h2>
+            <div className="flex items-center gap-3">
+              <img 
+                src="src/assets/Logo.png" 
+                alt="FocusPath Logo" 
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <h2 className="text-lg font-semibold">FocusPath</h2>
+            </div>
             <button onClick={collapseNav} aria-label="Collapse navigation" className="p-2">
               {'<'}
             </button>
