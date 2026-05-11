@@ -25,13 +25,26 @@ const initialSubjects = [
 	},
 ]
 
+const subjectColors = [
+	'red',
+	'blue',
+	'green',
+	'yellow',
+	'purple',
+	'pink',
+	'orange',
+]
+
 const Subjects = () => {
 	const [subjects, setSubjects] = useState(initialSubjects)
 
 	const addSubject = () => {
+		const randomColor =
+			subjectColors[Math.floor(Math.random() * subjectColors.length)]
+
 		const newSubject = {
 			title: `Subject ${subjects.length + 1}`,
-			color: 'purple',
+			color: randomColor,
 			caption: 'New subject caption.',
 		}
 
@@ -50,10 +63,10 @@ const Subjects = () => {
 						</h1>
 					</div>
 
-					<div className="mt-12 grid gap-5 xl:grid-cols-4">
-						{subjects.map((item) => (
+					<div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+						{subjects.map((item, index) => (
 							<Card
-								key={item.title}
+								key={index}
 								color={item.color}
 								title={item.title}
 								caption={item.caption}
@@ -67,7 +80,7 @@ const Subjects = () => {
 				type="button"
 				onClick={addSubject}
 				aria-label="Add subject"
-				className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-gray-300 text-3xl leading-none text-black shadow-lg transition-transform hover:scale-105 pb-1.5"
+				className="fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center rounded-full bg-gray-300 text-3xl text-black shadow-lg transition-all duration-200 hover:scale-105 hover:bg-white"
 			>
 				+
 			</button>
