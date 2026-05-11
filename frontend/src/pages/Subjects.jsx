@@ -1,30 +1,43 @@
+import { useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Card from '../components/Card.jsx'
 
-const cardItems = [
+const initialSubjects = [
 	{
 		title: 'Subject One',
-        color: 'red',
+		color: 'red',
 		caption: 'Subject one caption.',
 	},
 	{
 		title: 'Subject Two',
-        color: 'blue',
+		color: 'blue',
 		caption: 'Subject two caption.',
 	},
 	{
 		title: 'Subject Three',
-        color: 'green',
+		color: 'green',
 		caption: 'Subject three caption.',
 	},
 	{
 		title: 'Subject Four',
-        color: 'yellow',
+		color: 'yellow',
 		caption: 'Subject four caption.',
 	},
 ]
 
 const Subjects = () => {
+	const [subjects, setSubjects] = useState(initialSubjects)
+
+	const addSubject = () => {
+		const newSubject = {
+			title: `Subject ${subjects.length + 1}`,
+			color: 'purple',
+			caption: 'New subject caption.',
+		}
+
+		setSubjects([...subjects, newSubject])
+	}
+
 	return (
 		<div className="flex min-h-screen bg-black text-white">
 			<Navbar />
@@ -38,8 +51,13 @@ const Subjects = () => {
 					</div>
 
 					<div className="mt-12 grid gap-5 xl:grid-cols-4">
-						{cardItems.map((item) => (
-							<Card key={item.title} color={item.color} title={item.title} caption={item.caption} />
+						{subjects.map((item) => (
+							<Card
+								key={item.title}
+								color={item.color}
+								title={item.title}
+								caption={item.caption}
+							/>
 						))}
 					</div>
 				</section>
@@ -47,6 +65,7 @@ const Subjects = () => {
 
 			<button
 				type="button"
+				onClick={addSubject}
 				aria-label="Add subject"
 				className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-gray-300 text-3xl leading-none text-black shadow-lg transition-transform hover:scale-105 pb-1.5"
 			>
