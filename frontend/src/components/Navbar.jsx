@@ -1,15 +1,35 @@
 import { NavLink } from 'react-router-dom'
 
+const TIMER_STORAGE_KEY = 'focuspath-study-timer-state'
+
+function isTimerRunning() {
+  try {
+    const saved = window.localStorage.getItem(TIMER_STORAGE_KEY)
+    if (!saved) {
+      return false
+    }
+
+    return Boolean(JSON.parse(saved).running)
+  } catch {
+    return false
+  }
+}
+
 const Navbar = () => {
+  const timerRunning = isTimerRunning()
   const items = [
     { label: 'Subjects', path: '/subjects' },
     { label: 'Exams', path: '/exams' },
     { label: 'Study Timer', path: '/study-timer' },
-    { label: 'Statistics', path: '/statistics' },
+    { label: 'Ask AI', path: '/ask-ai' },
     { label: 'Profile', path: '/profile' },
   ]
 
   function collapseNav() {
+    if (isTimerRunning()) {
+      return
+    }
+
     const nav = document.getElementById('app-nav')
     const toggle = document.getElementById('nav-toggle')
     if (nav && toggle) {
@@ -20,6 +40,10 @@ const Navbar = () => {
   }
 
   function openNav() {
+    if (isTimerRunning()) {
+      return
+    }
+
     const nav = document.getElementById('app-nav')
     const toggle = document.getElementById('nav-toggle')
     if (nav && toggle) {
@@ -31,7 +55,10 @@ const Navbar = () => {
 
   return (
     <>
-      <aside id="app-nav" className="bg-gray-900 text-white min-h-screen w-64">
+      <aside
+        id="app-nav"
+        className={`${timerRunning ? 'hidden' : ''} bg-gray-900 text-white min-h-screen w-64`}
+      >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
             <div className="flex items-center gap-3">
@@ -70,7 +97,7 @@ const Navbar = () => {
       </aside>
 
       {/* NOTE: collapsed toggle [hidden by default] */}
-      <div id="nav-toggle" className="hidden bg-gray-900 text-white min-h-screen items-start">
+      <div id="nav-toggle" className={`${timerRunning ? 'hidden' : 'hidden'} bg-gray-900 text-white min-h-screen items-start`}>
         <button onClick={openNav} aria-label="Open navigation" className="w-8 h-12 m-2 bg-gray-800 text-white rounded">
           {'>'}
         </button>
