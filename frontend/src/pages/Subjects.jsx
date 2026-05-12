@@ -154,7 +154,7 @@ const Subjects = () => {
 				type="button"
 				onClick={() => setShowModal(true)}
 				aria-label="Add subject"
-				className="fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center rounded-full bg-gray-300 text-3xl text-black shadow-lg transition-all duration-200 hover:scale-105 hover:bg-white"
+				className="fixed bottom-8 right-8 flex h-14 w-14 pb-1 items-center justify-center rounded-full bg-gray-300 text-3xl text-black shadow-lg transition-all duration-200 hover:scale-105 hover:bg-white"
 			>
 				+
 			</button>
