@@ -71,7 +71,7 @@ const Exams = () => {
 	}
 
 	function editingTopics() {
-		
+
 	}
 
 	function addExam() {
@@ -86,8 +86,7 @@ const Exams = () => {
 		}
 
 		const newExam = {
-			// id: newID(),
-			id: 5,
+			id: newID(),
 			title: examName,
 			date: new Date(examDate),
 			topics: [],
@@ -109,12 +108,31 @@ const Exams = () => {
 		setTypeForm(null)
 	}
 
-	// function editExam(exam) {
-	// 	setEditText(exam.title)
-	// 	//setEditDate(exam.date)
-	// 	//setExams(exam.topics)
-	// 	setShowForm(false)
-	// }
+	function editExam(exam) {
+		// validate inputs
+		if (!examName.trim()) {
+			alert('Please enter exam name')
+			return
+		}
+		if (!examDate.trim()) {
+			alert('Please enter exam date')
+			return
+		}
+
+		const newExam = {
+			id: newID(),
+			title: examName,
+			date: new Date(examDate),
+			topics: [],
+			isTopicDone: []
+		}
+
+		// prev gets latest state
+		setExams(prev => [...prev, newExam])
+
+		// reset tracking variables
+		resetInputs();
+	}
 
 	// function editTopicCheck(isTopicDone) {
 	// 	setExams()
