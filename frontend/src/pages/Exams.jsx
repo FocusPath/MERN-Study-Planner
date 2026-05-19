@@ -118,7 +118,7 @@ const Exams = () => {
 		setExams(prev =>
 			prev.map(exam =>
 				exam.id === selectedId
-					? { ...exam, title: examName, date: new Date(examDate),topics: examTopics }
+					? { ...exam, title: examName, date: new Date(examDate), topics: examTopics }
 
 					: exam
 			)
@@ -196,8 +196,7 @@ const Exams = () => {
 									</button>
 
 									<button onClick={() => {
-										// setShowForm(true), setTypeForm(FormTypes.EDIT_EXAM), setExamDate(item.date.toLocaleDateString()), setExamName(item.title), setSelectedId(item.id)
-										setShowForm(true), setTypeForm(FormTypes.EDIT_EXAM), setExamDate(item.date.toLocaleDateString()), setExamName(item.title), setSelectedId(item.id) ,setExamTopics(item.topics)
+										setShowForm(true), setTypeForm(FormTypes.EDIT_EXAM), setExamDate(item.date.toLocaleDateString()), setExamName(item.title), setSelectedId(item.id), setExamTopics(item.topics)
 									}}
 										className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
 									>
@@ -232,7 +231,7 @@ const Exams = () => {
 			{/* comparison uses === instead of == */}
 			{showForm && typeForm === FormTypes.ADD_EXAM && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/70">
-					<div className="w-full max-w-md max-h-[90vh] overflow-y rounded-xl bg-white p-6 text-black shadow-2xl">
+					<div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 text-black shadow-2xl">
 						<h2 className="mb-4 text-2xl font-semibold">
 							ADD EXAM!
 						</h2>
@@ -260,13 +259,18 @@ const Exams = () => {
 								value={topicName}
 								onChange={e => setTopicName(e.target.value)}
 							/>
-							<button onClick={addTopic}>Add</button>
+							<button onClick={addTopic} className="rounded bg-gray-600 px-2 py-1 text-white hover:bg-gray-800">Add</button>
 						</div>
-						<div className="flex gap-2">
+						<div className="flex flex-col gap-2 mt-2">
 							{examTopics.map((topic, index) => (
-								<div key={index} className="flex items-center gap-2 rounded-lg border p-2">
-									<div>{topic.topic}</div>
-									<button onClick={() => setExamTopics(examTopics.filter((_, i) => i !== index))}>Delete</button>
+								<div key={index} className="flex gap-2">
+									<div className="flex-1 rounded border p-2">{topic.topic}</div>
+									<button
+										onClick={() => setExamTopics(examTopics.filter((_, i) => i !== index))}
+										className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
+									>
+										Delete
+									</button>
 								</div>
 							))}
 						</div>
@@ -274,7 +278,7 @@ const Exams = () => {
 						<button onClick={() => {
 							addExam()
 						}}
-							className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
+							className="rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
 						>
 							Submit
 						</button>
@@ -290,7 +294,7 @@ const Exams = () => {
 			{/* floating form for editing exam */}
 			{showForm && typeForm === FormTypes.EDIT_EXAM && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/70">
-					<div className="w-full max-w-md max-h-[90vh] overflow-y rounded-xl bg-white p-6 text-black shadow-2xl">
+					<div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 text-black shadow-2xl">
 						<h2 className="mb-4 text-2xl font-semibold">
 							EDIT EXAM!
 						</h2>
@@ -323,22 +327,22 @@ const Exams = () => {
 							<button onClick={addTopic} className="rounded bg-gray-600 px-2 py-1 text-white hover:bg-gray-800">Add</button>
 						</div>
 						<div className="flex flex-col gap-2 mt-2">
-  {examTopics.map((topic, index) => (
-    <div key={index} className="flex gap-2">
-      <div className="flex-1 rounded border p-2">{topic.topic}</div>
-      <button
-        onClick={() => setExamTopics(examTopics.filter((_, i) => i !== index))}
-        className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
-      >
-        Delete
-      </button>
-    </div>
-  ))}
-</div>
+							{examTopics.map((topic, index) => (
+								<div key={index} className="flex gap-2">
+									<div className="flex-1 rounded border p-2">{topic.topic}</div>
+									<button
+										onClick={() => setExamTopics(examTopics.filter((_, i) => i !== index))}
+										className="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
+									>
+										Delete
+									</button>
+								</div>
+							))}
+						</div>
 
 						<button onClick={() => {
 							editExam();
-							
+
 						}}
 							className="rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
 						>
