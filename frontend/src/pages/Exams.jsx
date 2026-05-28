@@ -132,9 +132,9 @@ const Exams = () => {
 		}
 
 		const randomColor =
-				subjectColors[
-					Math.floor(Math.random() * subjectColors.length)
-				]
+			subjectColors[
+			Math.floor(Math.random() * subjectColors.length)
+			]
 
 		const newExam = {
 			id: Date.now(),
@@ -218,20 +218,20 @@ const Exams = () => {
 	}
 
 	function addSubjectAsTopic(subjectTitle) {
-	// Check if topic already exists
-	const topicExists = examTopics.some(topic => topic.topic === subjectTitle)
-	
-	if (topicExists) {
-		alert('This subject is already added!')
-		return
+		// Check if topic already exists
+		const topicExists = examTopics.some(topic => topic.topic === subjectTitle)
+
+		if (topicExists) {
+			alert('This subject is already added!')
+			return
+		}
+
+		const newTopic = {
+			topic: subjectTitle,
+			done: false,
+		}
+		setExamTopics((prev) => [...prev, newTopic])
 	}
-	
-	const newTopic = {
-		topic: subjectTitle,
-		done: false,
-	}
-	setExamTopics((prev) => [...prev, newTopic])
-}
 
 	const CancelButton = ({ onClick }) => {
 		return (
@@ -346,7 +346,7 @@ const Exams = () => {
 								</button>
 							))}
 						</div>
-						
+
 
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
