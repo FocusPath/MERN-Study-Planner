@@ -23,6 +23,37 @@ const examsTest = [
 	},
 ]
 
+const initialSubjects = [
+	{
+		id: 1,
+		title: 'Subject One',
+		color: 'red',
+		caption: 'Subject one caption.',
+		icon: '📘',
+	},
+	{
+		id: 2,
+		title: 'Subject Two',
+		color: 'blue',
+		caption: 'Subject two caption.',
+		icon: '📗',
+	},
+	{
+		id: 3,
+		title: 'Subject Three',
+		color: 'green',
+		caption: 'Subject three caption.',
+		icon: '📙',
+	},
+	{
+		id: 4,
+		title: 'Subject Four',
+		color: 'yellow',
+		caption: 'Subject four caption.',
+		icon: '📕',
+	},
+]
+
 const subjectColors = [
 	'red',
 	'blue',
@@ -45,6 +76,7 @@ const Exams = () => {
 	// setExams updates exams
 	// examsTest is inital state
 	const [exams, setExams] = useState(examsTest) // access all exams (this is a hook)
+	const [subjects, setSubjects] = useState(initialSubjects)
 
 	// temporarly saves user inputs
 	const [examName, setExamName] = useState('')
@@ -185,6 +217,22 @@ const Exams = () => {
 		setTopicName('');
 	}
 
+	function addSubjectAsTopic(subjectTitle) {
+	// Check if topic already exists
+	const topicExists = examTopics.some(topic => topic.topic === subjectTitle)
+	
+	if (topicExists) {
+		alert('This subject is already added!')
+		return
+	}
+	
+	const newTopic = {
+		topic: subjectTitle,
+		done: false,
+	}
+	setExamTopics((prev) => [...prev, newTopic])
+}
+
 	const CancelButton = ({ onClick }) => {
 		return (
 			<button
@@ -284,9 +332,25 @@ const Exams = () => {
 							onChange={(e) => setExamTime(e.target.value)}
 						/>
 
+
+						<hr className="my-4 border-gray-500" />
+						<h3 className="mb-3 text-lg font-semibold">SELECT FROM SUBJECTS</h3>
+						<div className="mb-4 grid grid-cols-2 gap-2">
+							{subjects.map((subject) => (
+								<button
+									key={subject.id}
+									onClick={() => addSubjectAsTopic(subject.title)}
+									className="rounded bg-blue-100 p-2 text-sm text-blue-900 hover:bg-blue-200"
+								>
+									{subject.icon} {subject.title}
+								</button>
+							))}
+						</div>
+						
+
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
-							ADD TOPICS!
+							ADD CUSTOM TOPICS!
 						</h1>
 						<div className="flex gap-2">
 							<input
@@ -354,6 +418,20 @@ const Exams = () => {
 							value={examTime}
 							onChange={(e) => setExamTime(e.target.value)}
 						/>
+
+						<hr className="my-4 border-gray-500" />
+						<h3 className="mb-3 text-lg font-semibold">ADD FROM SUBJECTS</h3>
+						<div className="mb-4 grid grid-cols-2 gap-2">
+							{subjects.map((subject) => (
+								<button
+									key={subject.id}
+									onClick={() => addSubjectAsTopic(subject.title)}
+									className="rounded bg-blue-100 p-2 text-sm text-blue-900 hover:bg-blue-200"
+								>
+									{subject.icon} {subject.title}
+								</button>
+							))}
+						</div>
 
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
