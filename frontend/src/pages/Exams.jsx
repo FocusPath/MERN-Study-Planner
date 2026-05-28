@@ -8,15 +8,29 @@ const examsTest = [
 	{
 		id: 1,
 		title: 'Physics',
-		date: new Date('2026-05-11T10:30:00'),
+		color: 'red',
+		date: "2026-05-11",
+		time: "10:30",
 		topics: [{ topic: "Oscillations and Waves", done: true }, { topic: "Gravitational Field", done: true }, { topic: "Electronics", done: true }, { topic: "Electromagnetism", done: false }]
 	},
 	{
 		id: 2,
 		title: 'Chemistry',
-		date: new Date('2026-05-12T10:30:00'),
+		color: 'yellow',
+		date: "2026-05-11",
+		time: "10:30",
 		topics: [{ topic: "Organic Chemistry", done: true }, { topic: "Thermochemistry", done: false }, { topic: "Electrochemistry", done: false }, { topic: "Mole Calculation", done: false }]
 	},
+]
+
+const subjectColors = [
+	'red',
+	'blue',
+	'green',
+	'yellow',
+	'purple',
+	'pink',
+	'orange',
 ]
 
 const FormTypes = {
@@ -35,6 +49,7 @@ const Exams = () => {
 	// temporarly saves user inputs
 	const [examName, setExamName] = useState('')
 	const [examDate, setExamDate] = useState('')
+	const [examTime, setExamTime] = useState('')
 
 	const [topicName, setTopicName] = useState('')
 	const [examTopics, setExamTopics] = useState([])
@@ -73,15 +88,28 @@ const Exams = () => {
 			alert('Please enter exam date');
 			return;
 		}
+
+		if (!examTime.trim()) {
+			alert('Please enter exam time');
+			return;
+		}
 		// Optionally: require at least one topic
 		if (examTopics.length === 0) {
 			alert('Please add at least one topic');
 			return;
 		}
+
+		const randomColor =
+				subjectColors[
+					Math.floor(Math.random() * subjectColors.length)
+				]
+
 		const newExam = {
 			id: Date.now(),
 			title: examName,
-			date: new Date(examDate),
+			color: randomColor,
+			date: examDate,
+			time: examTime,
 			topics: examTopics,
 		};
 		setExams(prev => [...prev, newExam]);
@@ -92,6 +120,7 @@ const Exams = () => {
 	function resetInputs() {
 		setExamName('');
 		setExamDate('');
+		setExamTime('');
 		setSelectedId(null);
 		setShowForm(false);
 		setTypeForm(null);
@@ -118,7 +147,7 @@ const Exams = () => {
 		setExams(prev =>
 			prev.map(exam =>
 				exam.id === selectedId
-					? { ...exam, title: examName, date: new Date(examDate), topics: examTopics }
+					? { ...exam, title: examName, time: examTime, date: examDate, topics: examTopics }
 
 					: exam
 			)
@@ -179,11 +208,11 @@ const Exams = () => {
 					<div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
 						{
 							exams.map((item) => (
-								<div>
+								<div key={item.id}>
 									<Card
-										color={'blue'}
+										color={item.color}
 										title={`${item.title}`}
-										caption={`${item.date.toLocaleString()} || ${calculateProgress(item.topics)}%`}
+										caption={`${item.date} || ${item.time} || ${calculateProgress(item.topics)}%`}
 									/>
 
 
@@ -196,7 +225,7 @@ const Exams = () => {
 									</button>
 
 									<button onClick={() => {
-										setShowForm(true), setTypeForm(FormTypes.EDIT_EXAM), setExamDate(item.date.toLocaleDateString()), setExamName(item.title), setSelectedId(item.id), setExamTopics(item.topics)
+										setShowForm(true), setTypeForm(FormTypes.EDIT_EXAM), setExamDate(item.date), setExamTime(item.time), setExamName(item.title), setSelectedId(item.id), setExamTopics(item.topics)
 									}}
 										className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
 									>
@@ -247,6 +276,14 @@ const Exams = () => {
 							placeholder='Enter Exam date'
 							value={examDate}
 							onChange={(e) => setExamDate(e.target.value)} />
+
+						<input
+							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
+							type="time"
+							value={examTime}
+							onChange={(e) => setExamTime(e.target.value)}
+						/>
+
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
 							ADD TOPICS!
@@ -311,6 +348,13 @@ const Exams = () => {
 							value={examDate}
 							onChange={(e) => setExamDate(e.target.value)} />
 
+						<input
+							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
+							type="time"
+							value={examTime}
+							onChange={(e) => setExamTime(e.target.value)}
+						/>
+
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
 							EDIT TOPICS!
@@ -367,14 +411,15 @@ const Exams = () => {
 							{selectedExam.title}
 						</h2>
 
-						<p className="mt-2 text-sm leading-6 text-slate-600"><strong>Exam Date: </strong>{`${selectedExam.date.toLocaleDateString()} `}</p>
-						<p className="mt-2 text-sm leading-6 text-slate-600"><strong>Exam Time: </strong>{`${selectedExam.date.toLocaleTimeString()} `}</p>
+						<p><strong>Exam Date: </strong>{selectedExam.date}</p>
+						<p><strong>Exam Time: </strong>{selectedExam.time}</p>
 						<p className="mt-2 text-sm leading-6 text-slate-600"> <strong>Topic Progress: </strong>{`${calculateProgress(selectedExam.topics)}%`}</p>
 						<hr className="my-2 border-gray-500" />
 						<strong className="mt-2 text-sm bold leading-6 text-slate-600">{"TOPICS!"}</strong>
 						<div className="mt-4 space-y-2">
 							{selectedExam.topics.map((topic, index) => (
 								<CheckBox
+									key={index}
 									topic={topic}
 									onToggle={() => toggleTopic(index)} />
 							))}
