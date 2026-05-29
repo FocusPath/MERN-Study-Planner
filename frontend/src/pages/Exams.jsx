@@ -29,28 +29,24 @@ const initialSubjects = [
 		title: 'Subject One',
 		color: 'red',
 		caption: 'Subject one caption.',
-		icon: '📘',
 	},
 	{
 		id: 2,
 		title: 'Subject Two',
 		color: 'blue',
 		caption: 'Subject two caption.',
-		icon: '📗',
 	},
 	{
 		id: 3,
 		title: 'Subject Three',
 		color: 'green',
 		caption: 'Subject three caption.',
-		icon: '📙',
 	},
 	{
 		id: 4,
 		title: 'Subject Four',
 		color: 'yellow',
 		caption: 'Subject four caption.',
-		icon: '📕',
 	},
 ]
 
@@ -217,21 +213,21 @@ const Exams = () => {
 		setTopicName('');
 	}
 
-	function addSubjectAsTopic(subjectTitle) {
-		// Check if topic already exists
-		const topicExists = examTopics.some(topic => topic.topic === subjectTitle)
+	// function addSubjectAsTopic(subjectTitle) {
+	// 	// Check if topic already exists
+	// 	const topicExists = examTopics.some(topic => topic.topic === subjectTitle)
 
-		if (topicExists) {
-			alert('This subject is already added!')
-			return
-		}
+	// 	if (topicExists) {
+	// 		alert('This subject is already added!')
+	// 		return
+	// 	}
 
-		const newTopic = {
-			topic: subjectTitle,
-			done: false,
-		}
-		setExamTopics((prev) => [...prev, newTopic])
-	}
+	// 	const newTopic = {
+	// 		topic: subjectTitle,
+	// 		done: false,
+	// 	}
+	// 	setExamTopics((prev) => [...prev, newTopic])
+	// }
 
 	const CancelButton = ({ onClick }) => {
 		return (
@@ -313,11 +309,31 @@ const Exams = () => {
 							ADD EXAM!
 						</h2>
 
-						<input className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
+
+						<h3 className="mb-3 text-lg font-semibold">SELECT SUBJECT OR ENTER CUSTOM NAME</h3>
+						<div className="mb-4 grid grid-cols-2 gap-2">
+							{subjects.map((subject) => (
+								<button
+									key={subject.id}
+									onClick={() => setExamName(subject.title)}
+									className={`rounded p-2 text-sm ${examName === subject.title
+											? 'bg-blue-500 text-white font-semibold'
+											: 'bg-blue-100 text-blue-900 hover:bg-blue-200'
+										}`}
+								>
+									{subject.icon} {subject.title}
+								</button>
+							))}
+						</div>
+
+						<input
+							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black mb-4"
 							type="text"
-							placeholder='Enter Exam name'
+							placeholder='Or enter custom exam name'
 							value={examName}
-							onChange={(e) => setExamName(e.target.value)} />
+							onChange={(e) => setExamName(e.target.value)}
+						/>
+
 
 						<input className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
 							type="date"
@@ -333,19 +349,16 @@ const Exams = () => {
 						/>
 
 
-						<hr className="my-4 border-gray-500" />
-						<h3 className="mb-3 text-lg font-semibold">SELECT FROM SUBJECTS</h3>
-						<div className="mb-4 grid grid-cols-2 gap-2">
-							{subjects.map((subject) => (
-								<button
-									key={subject.id}
-									onClick={() => addSubjectAsTopic(subject.title)}
-									className="rounded bg-blue-100 p-2 text-sm text-blue-900 hover:bg-blue-200"
-								>
-									{subject.icon} {subject.title}
-								</button>
-							))}
-						</div>
+
+						<input
+							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black mb-4"
+							type="text"
+							placeholder='Or enter custom exam name'
+							value={examName}
+							onChange={(e) => setExamName(e.target.value)}
+						/>
+
+
 
 
 						<hr className="my-2 border-gray-500" />
@@ -400,11 +413,31 @@ const Exams = () => {
 							EDIT EXAM!
 						</h2>
 
-						<input className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
+
+						<h3 className="mb-3 text-lg font-semibold">SELECT SUBJECT OR ENTER CUSTOM NAME</h3>
+						<div className="mb-4 grid grid-cols-2 gap-2">
+							{subjects.map((subject) => (
+								<button
+									key={subject.id}
+									onClick={() => setExamName(subject.title)}
+									className={`rounded p-2 text-sm ${examName === subject.title
+											? 'bg-blue-500 text-white font-semibold'
+											: 'bg-blue-100 text-blue-900 hover:bg-blue-200'
+										}`}
+								>
+									{subject.icon} {subject.title}
+								</button>
+							))}
+						</div>
+
+						<input
+							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black mb-4"
 							type="text"
-							placeholder='Enter Exam name'
+							placeholder='Or enter custom exam name'
 							value={examName}
-							onChange={(e) => setExamName(e.target.value)} />
+							onChange={(e) => setExamName(e.target.value)}
+						/>
+
 
 						<input className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
 							type="date"
@@ -419,7 +452,7 @@ const Exams = () => {
 							onChange={(e) => setExamTime(e.target.value)}
 						/>
 
-						<hr className="my-4 border-gray-500" />
+						{/* <hr className="my-4 border-gray-500" />
 						<h3 className="mb-3 text-lg font-semibold">ADD FROM SUBJECTS</h3>
 						<div className="mb-4 grid grid-cols-2 gap-2">
 							{subjects.map((subject) => (
@@ -428,10 +461,10 @@ const Exams = () => {
 									onClick={() => addSubjectAsTopic(subject.title)}
 									className="rounded bg-blue-100 p-2 text-sm text-blue-900 hover:bg-blue-200"
 								>
-									{subject.icon} {subject.title}
+									 {subject.title}
 								</button>
 							))}
-						</div>
+						</div> */}
 
 						<hr className="my-2 border-gray-500" />
 						<h1 className="mb-4 text-2xl font-semibold">
