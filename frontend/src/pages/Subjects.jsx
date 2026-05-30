@@ -8,28 +8,24 @@ const initialSubjects = [
 		title: 'Subject One',
 		color: 'red',
 		caption: 'Subject one caption.',
-		icon: '📘',
 	},
 	{
 		id: 2,
 		title: 'Subject Two',
 		color: 'blue',
 		caption: 'Subject two caption.',
-		icon: '📗',
 	},
 	{
 		id: 3,
 		title: 'Subject Three',
 		color: 'green',
 		caption: 'Subject three caption.',
-		icon: '📙',
 	},
 	{
 		id: 4,
 		title: 'Subject Four',
 		color: 'yellow',
 		caption: 'Subject four caption.',
-		icon: '📕',
 	},
 ]
 
@@ -43,7 +39,6 @@ const subjectColors = [
 	'orange',
 ]
 
-const subjectIcons = ['📘', '📗', '📙', '📕', '📚', '📝']
 
 const Subjects = () => {
 	const [subjects, setSubjects] = useState(initialSubjects)
@@ -62,29 +57,25 @@ const Subjects = () => {
 				subjects.map((subject) =>
 					subject.id === editingId
 						? {
-								...subject,
-								title: subjectName,
-						  }
+							...subject,
+							title: subjectName,
+						}
 						: subject
 				)
 			)
 		} else {
 			const randomColor =
 				subjectColors[
-					Math.floor(Math.random() * subjectColors.length)
+				Math.floor(Math.random() * subjectColors.length)
 				]
 
-			const randomIcon =
-				subjectIcons[
-					Math.floor(Math.random() * subjectIcons.length)
-				]
+
 
 			const newSubject = {
 				id: Date.now(),
 				title: subjectName,
 				color: randomColor,
 				caption: 'New subject caption.',
-				icon: randomIcon,
 			}
 
 			setSubjects([...subjects, newSubject])
@@ -125,7 +116,7 @@ const Subjects = () => {
 							>
 								<Card
 									color={item.color}
-									title={`${item.icon} ${item.title}`}
+									title={`${item.title}`}
 									caption={item.caption}
 								/>
 
