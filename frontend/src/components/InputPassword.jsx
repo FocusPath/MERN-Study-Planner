@@ -1,6 +1,6 @@
 const InputPassword = ({ title = "Password", value, onChange }) => {
   return (
-    <form>
+    <div>
       <h2 className="text-xl font-semibold p-2">{title}</h2>
       <input
         type="password"
@@ -9,7 +9,7 @@ const InputPassword = ({ title = "Password", value, onChange }) => {
         value={value}
         onChange={onChange}
       />
-    </form>
+    </div>
   )
 }
 

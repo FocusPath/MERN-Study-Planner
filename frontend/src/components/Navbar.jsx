@@ -1,4 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import Logo from '../assets/Logo.png'
+import { clearCurrentEmail, getCurrentEmail } from '../lib/auth.js'
 
 const TIMER_STORAGE_KEY = 'focuspath-study-timer-state'
 
@@ -16,7 +18,9 @@ function isTimerRunning() {
 }
 
 const Navbar = () => {
+  const navigate = useNavigate()
   const timerRunning = isTimerRunning()
+  const currentEmail = getCurrentEmail()
   const items = [
     { label: 'Subjects', path: '/subjects' },
     { label: 'Exams', path: '/exams' },
@@ -53,6 +57,11 @@ const Navbar = () => {
     }
   }
 
+  function handleSignOut() {
+    clearCurrentEmail()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <>
       <aside
@@ -63,11 +72,14 @@ const Navbar = () => {
           <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
             <div className="flex items-center gap-3">
               <img 
-                src="src/assets/Logo.png" 
+                src={Logo} 
                 alt="FocusPath Logo" 
                 className="w-10 h-10 rounded-full object-cover"
               />
-              <h2 className="text-lg font-semibold">FocusPath</h2>
+              <div>
+                <h2 className="text-lg font-semibold">FocusPath</h2>
+                {currentEmail ? <p className="text-xs text-gray-400">{currentEmail}</p> : null}
+              </div>
             </div>
             <button onClick={collapseNav} aria-label="Collapse navigation" className="p-2">
               {'<'}
@@ -90,8 +102,11 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="px-4 py-4 border-t border-gray-800 cursor-pointer">
-            <p className="text-sm text-gray-400">Sign Out</p>
+          <div className="space-y-3 border-t border-gray-800 px-4 py-4">
+            <p className="break-all text-xs text-gray-400">{currentEmail || 'No active workspace'}</p>
+            <button onClick={handleSignOut} className="text-sm text-left text-gray-200 transition hover:text-white">
+              Sign Out
+            </button>
           </div>
         </div>
       </aside>
