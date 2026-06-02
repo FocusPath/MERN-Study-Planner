@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Navbar from '../components/Navbar.jsx'
+import alarmSound from '../assets/alarm.mp3'
 
 const TIMER_STORAGE_KEY = 'focuspath-study-timer-state'
 
@@ -321,6 +322,10 @@ const StudyTimer = () => {
 		return () => {
 			if (confirm) confirm.removeEventListener('click', onConfirm)
 			if (cancel) cancel.removeEventListener('click', onCancel)
+			if (timerId) {
+				clearInterval(timerId)
+				timerId = null
+			}
 		}
 	}, [])
 
@@ -365,7 +370,7 @@ const StudyTimer = () => {
 					</div>
 				</section>
 			</main>
-				<audio id="study-timer-audio" src="src/assets/alarm.mp3" />
+				<audio id="study-timer-audio" src={alarmSound} />
 
 				{/* Modal for minutes input (hidden by default) */}
 				<div id="study-timer-modal" className="fixed inset-0 z-50 hidden">

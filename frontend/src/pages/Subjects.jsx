@@ -1,33 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Card from '../components/Card.jsx'
-
-const initialSubjects = [
-	{
-		id: 1,
-		title: 'Subject One',
-		color: 'red',
-		caption: 'Subject one caption.',
-	},
-	{
-		id: 2,
-		title: 'Subject Two',
-		color: 'blue',
-		caption: 'Subject two caption.',
-	},
-	{
-		id: 3,
-		title: 'Subject Three',
-		color: 'green',
-		caption: 'Subject three caption.',
-	},
-	{
-		id: 4,
-		title: 'Subject Four',
-		color: 'yellow',
-		caption: 'Subject four caption.',
-	},
-]
+import api from '../lib/api.js'
+import { getCurrentEmail } from '../lib/auth.js'
 
 const subjectColors = [
 	'red',
@@ -39,55 +14,49 @@ const subjectColors = [
 	'orange',
 ]
 
-
 const Subjects = () => {
-	const [subjects, setSubjects] = useState(initialSubjects)
-
+	const email = getCurrentEmail()
+	const [subjects, setSubjects] = useState([])
 	const [showModal, setShowModal] = useState(false)
-
 	const [subjectName, setSubjectName] = useState('')
-
 	const [editingId, setEditingId] = useState(null)
+	const [loading, setLoading] = useState(true)
 
-	const addOrUpdateSubject = () => {
-		if (!subjectName.trim()) return
-
-		if (editingId) {
-			setSubjects(
-				subjects.map((subject) =>
-					subject.id === editingId
-						? {
-							...subject,
-							title: subjectName,
-						}
-						: subject
-				)
-			)
-		} else {
-			const randomColor =
-				subjectColors[
-				Math.floor(Math.random() * subjectColors.length)
-				]
-
-
-
-			const newSubject = {
-				id: Date.now(),
-				title: subjectName,
-				color: randomColor,
-				caption: 'New subject caption.',
+	useEffect(() => {
+		const loadSubjects = async () => {
+			try {
+				const response = await api.get('/subjects', { params: { email } })
+				setSubjects(response.data.subjects || [])
+			} finally {
+				setLoading(false)
 			}
-
-			setSubjects([...subjects, newSubject])
 		}
 
-		setSubjectName('')
-		setEditingId(null)
-		setShowModal(false)
+		loadSubjects()
+	}, [email])
+
+	const addOrUpdateSubject = async () => {
+		if (!subjectName.trim()) return
+
+		try {
+			if (editingId) {
+				const response = await api.patch(`/subjects/${editingId}`, { title: subjectName }, { params: { email } })
+				setSubjects(response.data.subjects || [])
+			} else {
+				const randomColor = subjectColors[Math.floor(Math.random() * subjectColors.length)]
+				const response = await api.post('/subjects', { title: subjectName, color: randomColor }, { params: { email } })
+				setSubjects(response.data.subjects || [])
+			}
+		} finally {
+			setSubjectName('')
+			setEditingId(null)
+			setShowModal(false)
+		}
 	}
 
-	const deleteSubject = (id) => {
-		setSubjects(subjects.filter((subject) => subject.id !== id))
+	const deleteSubject = async (id) => {
+		const response = await api.delete(`/subjects/${id}`, { params: { email } })
+		setSubjects(response.data.subjects || [])
 	}
 
 	const editSubject = (subject) => {
@@ -103,37 +72,20 @@ const Subjects = () => {
 			<main className="flex-1 px-6 py-16">
 				<section className="mx-auto max-w-6xl">
 					<div className="max-w-2xl">
-						<h1 className="text-4xl font-semibold uppercase tracking-[0.3em] text-gray-500">
-							Subjects
-						</h1>
+						<h1 className="text-4xl font-semibold uppercase tracking-[0.3em] text-gray-500">Subjects</h1>
 					</div>
 
 					<div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-						{subjects.map((item) => (
-							<div
-								key={item.id}
-								className="relative"
-							>
-								<Card
-									color={item.color}
-									title={`${item.title}`}
-									caption={item.caption}
-								/>
-
+						{loading ? (
+							<p className="text-gray-300">Loading subjects...</p>
+						) : subjects.length === 0 ? (
+							<p className="text-gray-300">No subjects yet. Add one to start tracking your study plan.</p>
+						) : subjects.map((item) => (
+							<div key={item.id} className="relative">
+								<Card color={item.color} title={item.title} caption={item.caption} />
 								<div className="absolute right-3 top-3 flex gap-2">
-									<button
-										onClick={() => editSubject(item)}
-										className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600"
-									>
-										Edit
-									</button>
-
-									<button
-										onClick={() => deleteSubject(item.id)}
-										className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600"
-									>
-										Delete
-									</button>
+									<button onClick={() => editSubject(item)} className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600">Edit</button>
+									<button onClick={() => deleteSubject(item.id)} className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600">Delete</button>
 								</div>
 							</div>
 						))}
@@ -153,17 +105,13 @@ const Subjects = () => {
 			{showModal && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/70">
 					<div className="w-full max-w-md rounded-xl bg-white p-6 text-black shadow-2xl">
-						<h2 className="mb-4 text-2xl font-semibold">
-							{editingId ? 'Edit Subject' : 'Add Subject'}
-						</h2>
+						<h2 className="mb-4 text-2xl font-semibold">{editingId ? 'Edit Subject' : 'Add Subject'}</h2>
 
 						<input
 							type="text"
 							placeholder="Enter subject name"
 							value={subjectName}
-							onChange={(e) =>
-								setSubjectName(e.target.value)
-							}
+							onChange={(e) => setSubjectName(e.target.value)}
 							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black"
 						/>
 
@@ -179,10 +127,7 @@ const Subjects = () => {
 								Cancel
 							</button>
 
-							<button
-								onClick={addOrUpdateSubject}
-								className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800"
-							>
+							<button onClick={addOrUpdateSubject} className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800">
 								{editingId ? 'Update' : 'Add'}
 							</button>
 						</div>

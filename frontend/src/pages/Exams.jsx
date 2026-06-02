@@ -1,54 +1,9 @@
 import Navbar from '../components/Navbar.jsx'
 import Card from '../components/Card.jsx'
 import CheckBox from '../components/CheckBox.jsx'
-import { useState } from 'react'
-
-// test data
-const examsTest = [
-	{
-		id: 1,
-		title: 'Physics',
-		color: 'red',
-		date: "2026-05-11",
-		time: "10:30",
-		topics: [{ topic: "Oscillations and Waves", done: true }, { topic: "Gravitational Field", done: true }, { topic: "Electronics", done: true }, { topic: "Electromagnetism", done: false }]
-	},
-	{
-		id: 2,
-		title: 'Chemistry',
-		color: 'yellow',
-		date: "2026-05-11",
-		time: "10:30",
-		topics: [{ topic: "Organic Chemistry", done: true }, { topic: "Thermochemistry", done: false }, { topic: "Electrochemistry", done: false }, { topic: "Mole Calculation", done: false }]
-	},
-]
-
-const initialSubjects = [
-	{
-		id: 1,
-		title: 'Subject One',
-		color: 'red',
-		caption: 'Subject one caption.',
-	},
-	{
-		id: 2,
-		title: 'Subject Two',
-		color: 'blue',
-		caption: 'Subject two caption.',
-	},
-	{
-		id: 3,
-		title: 'Subject Three',
-		color: 'green',
-		caption: 'Subject three caption.',
-	},
-	{
-		id: 4,
-		title: 'Subject Four',
-		color: 'yellow',
-		caption: 'Subject four caption.',
-	},
-]
+import { useEffect, useState } from 'react'
+import api from '../lib/api.js'
+import { getCurrentEmail } from '../lib/auth.js'
 
 const subjectColors = [
 	'red',
@@ -68,11 +23,10 @@ const FormTypes = {
 
 //https://www.w3schools.com/react/react_forms.asp
 const Exams = () => {
-	// exams is current state
-	// setExams updates exams
-	// examsTest is inital state
-	const [exams, setExams] = useState(examsTest) // access all exams (this is a hook)
-	const [subjects, setSubjects] = useState(initialSubjects)
+	const email = getCurrentEmail()
+	const [exams, setExams] = useState([])
+	const [subjects, setSubjects] = useState([])
+	const [loading, setLoading] = useState(true)
 
 	// temporarly saves user inputs
 	const [examName, setExamName] = useState('')
@@ -92,6 +46,24 @@ const Exams = () => {
 
 	const selectedExam = exams.find(exam => exam.id === selectedId);
 
+	useEffect(() => {
+		const loadData = async () => {
+			try {
+				const [subjectsResponse, examsResponse] = await Promise.all([
+					api.get('/subjects', { params: { email } }),
+					api.get('/exams', { params: { email } }),
+				])
+
+				setSubjects(subjectsResponse.data.subjects || [])
+				setExams(examsResponse.data.exams || [])
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		loadData()
+	}, [email])
+
 	function calculateProgress(topics) { //https://stackoverflow.com/questions/1230233/how-to-find-the-sum-of-an-array-of-numbers
 		const sum = topics.reduce(
 			(count, item) => count + (item.done ? 1 : 0), 0
@@ -102,12 +74,13 @@ const Exams = () => {
 		return (sum / topics.length * 100).toFixed(1)
 	}
 
-	function deleteExam(id) {
-		setExams(exams.filter((exam) => exam.id !== id))
+	async function deleteExam(id) {
+		const response = await api.delete(`/exams/${id}`, { params: { email } })
+		setExams(response.data.exams || [])
 
 	}
 
-	function addExam() {
+	async function addExam() {
 		if (!examName.trim()) {
 			alert('Please enter exam name');
 			return;
@@ -132,15 +105,15 @@ const Exams = () => {
 			Math.floor(Math.random() * subjectColors.length)
 			]
 
-		const newExam = {
-			id: Date.now(),
+		const response = await api.post('/exams', {
 			title: examName,
 			color: randomColor,
 			date: examDate,
 			time: examTime,
 			topics: examTopics,
-		};
-		setExams(prev => [...prev, newExam]);
+		}, { params: { email } })
+
+		setExams(response.data.exams || [])
 		resetInputs();
 	}
 
@@ -156,7 +129,7 @@ const Exams = () => {
 		setExamTopics([]);
 	}
 
-	function editExam() {
+	async function editExam() {
 		// validate inputs
 		if (!examName.trim()) {
 			alert('Please enter exam name')
@@ -172,20 +145,34 @@ const Exams = () => {
 			return;
 		}
 
-		setExams(prev =>
-			prev.map(exam =>
-				exam.id === selectedId
-					? { ...exam, title: examName, time: examTime, date: examDate, topics: examTopics }
+		const response = await api.patch(`/exams/${selectedId}`, {
+			title: examName,
+			time: examTime,
+			date: examDate,
+			topics: examTopics,
+			color: selectedExam?.color,
+		}, { params: { email } })
 
-					: exam
-			)
-		)
+		setExams(response.data.exams || [])
 
 		// reset tracking variables
 		resetInputs();
 	}
 
-	function toggleTopic(index) { setExams(prev => prev.map(exam => exam.id === selectedId ? { ...exam, topics: exam.topics.map((topic, i) => i == index ? { ...topic, done: !topic.done } : topic) } : exam)) }
+	async function toggleTopic(index) {
+		if (!selectedExam) return
+
+		const topics = selectedExam.topics.map((topic, i) => i === index ? { ...topic, done: !topic.done } : topic)
+		const response = await api.patch(`/exams/${selectedId}`, {
+			title: selectedExam.title,
+			date: selectedExam.date,
+			time: selectedExam.time,
+			topics,
+			color: selectedExam.color,
+		}, { params: { email } })
+
+		setExams(response.data.exams || [])
+	}
 
 	function deleteTopic(index) {
 		setExams(prev =>
@@ -250,8 +237,11 @@ const Exams = () => {
 					<p className="mt-6 text-gray-300">Track upcoming exams.</p>
 
 					<div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-						{
-							exams.map((item) => (
+						{loading ? (
+							<p className="text-gray-300">Loading exams...</p>
+						) : exams.length === 0 ? (
+							<p className="text-gray-300">No exams yet. Add one to start tracking progress.</p>
+						) : exams.map((item) => (
 								<div key={item.id}>
 									<Card
 										color={item.color}
@@ -285,8 +275,7 @@ const Exams = () => {
 
 								</div>
 
-							))
-						}
+							))}
 					</div>
 				</section>
 			</main>
@@ -346,16 +335,6 @@ const Exams = () => {
 							type="time"
 							value={examTime}
 							onChange={(e) => setExamTime(e.target.value)}
-						/>
-
-
-
-						<input
-							className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-black mb-4"
-							type="text"
-							placeholder='Or enter custom exam name'
-							value={examName}
-							onChange={(e) => setExamName(e.target.value)}
 						/>
 
 

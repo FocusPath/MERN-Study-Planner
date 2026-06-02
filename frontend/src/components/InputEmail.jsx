@@ -1,6 +1,6 @@
 const InputEmail = ({ title = "Email", value, onChange }) => {
   return (
-    <form>
+    <div>
       <h2 className="text-xl font-semibold p-2">{title}</h2>
       <input
         type="email"
@@ -9,7 +9,7 @@ const InputEmail = ({ title = "Email", value, onChange }) => {
         value={value}
         onChange={onChange}
       />
-    </form>
+    </div>
   )
 }
 
